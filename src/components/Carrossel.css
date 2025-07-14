@@ -1,0 +1,13 @@
+.carousel .carousel-inner {
+  height: 500px;
+}
+
+.carousel-inner .carousel-item img {
+  min-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .carousel .carousel-inner {
+    height: auto;
+  }
+}

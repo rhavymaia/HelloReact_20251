@@ -1,15 +1,21 @@
+import { BrowserRouter, Route, Routes } from 'react-router';
 import './App.css';
-import Footer from './components/Footer';
-import Header from './components/Header';
-import Main from './components/Main';
+import Layout from './layouts/Layout';
+import Home from './pages/Home';
+import InstituicaoEnsino from './pages/InstituicaoEnsino';
+import NoPage from './pages/NoPage';
 
 function App() {
   return (
-    <>
-      <Header></Header>
-      <Main></Main>
-      <Footer></Footer>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="instituicaoensino" element={<InstituicaoEnsino />} />
+          <Route path="*" element={<NoPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
