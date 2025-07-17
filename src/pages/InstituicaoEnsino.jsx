@@ -1,11 +1,36 @@
 import { useState } from 'react';
-import { Button, Col, Container, Modal, Row, Table } from 'react-bootstrap';
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Table,
+} from 'react-bootstrap';
 import instituicoesEnsino from '../datasets/censoescolar';
+import './InstituicaoEnsino.css';
 
 const InstituicaoEnsino = () => {
+  const [instituicaoEnsino, setInstituicaoEnsino] = useState({
+    codigo: '',
+    nome: '',
+    uf: '',
+    municipio: '',
+    regiao: '',
+  });
+
   const [show, setShow] = useState(false);
 
   const handleShow = () => setShow(!show);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    console.log(name, value);
+
+    setInstituicaoEnsino({ ...instituicaoEnsino, [name]: value });
+    console.log(instituicaoEnsino);
+  };
 
   return (
     <Container className="mt-2">
@@ -58,19 +83,101 @@ const InstituicaoEnsino = () => {
         </Col>
       </Row>
 
-      <Modal show={show} onHide={handleShow}>
+      <Modal show={show} onHide={handleShow} dialogClassName="modal-80w">
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Instituição de Ensino</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleShow}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleShow}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
+        <Form>
+          <Modal.Body>
+            <Row>
+              <Col sm={3}>
+                <Form.Group className="mb-3" controlId="formGroupEmail">
+                  <Form.Label>Código</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Código"
+                    name="codigo"
+                    value={instituicaoEnsino.codigo}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col sm={9}>
+                <Form.Group className="mb-3" controlId="formGroupEmail">
+                  <Form.Label>Nome</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Nome"
+                    name="nome"
+                    value={instituicaoEnsino.nome}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="formGroupEmail">
+                  <Form.Label>UF</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="UF"
+                    name="uf"
+                    value={instituicaoEnsino.uf}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="formGroupEmail">
+                  <Form.Label>Município</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Município"
+                    name="municipio"
+                    value={instituicaoEnsino.municipio}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="formGroupEmail">
+                  <Form.Label>Região</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Região"
+                    name="regiao"
+                    value={instituicaoEnsino.regiao}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Button
+              variant="warning"
+              onClick={(e) => {
+                console.log(instituicaoEnsino);
+              }}
+            >
+              Exibir
+            </Button>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleShow}>
+              Fechar
+            </Button>
+            <Button variant="danger">Apagar</Button>
+            <Button type="submit" variant="primary" onClick={handleShow}>
+              Salvar
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
     </Container>
   );
