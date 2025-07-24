@@ -10,26 +10,50 @@ import {
 } from 'react-bootstrap';
 import instituicoesEnsino from '../datasets/censoescolar';
 import './InstituicaoEnsino.css';
+import estadosDataset from '../datasets/estados';
+import cidadesDataset from '../datasets/cidades';
 
 const InstituicaoEnsino = () => {
   const [instituicaoEnsino, setInstituicaoEnsino] = useState({
     codigo: '',
     nome: '',
-    uf: '',
+    estado: { sigla: '', nome: '' },
     municipio: '',
     regiao: '',
   });
+
+  let [estados, setEstados] = useState(estadosDataset);
+  let [municipios, setMunicipios] = useState([]);
 
   const [show, setShow] = useState(false);
 
   const handleShow = () => setShow(!show);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('Submeteu os dados!');
+  };
+  const handleChangeMunicipio = (event) => {};
+
+  const handleChangeEstado = (event) => {
+    const { name, value } = event.target;
+    // Atualizar a instituição de ensino com estado selecionado.
+    const sigla = value;
+    let estado = { sigla };
+    setInstituicaoEnsino({ ...instituicaoEnsino, estado });
+
+    // Filtrar as cidades.
+    let municipiosSelecionados = cidadesDataset.filter((cidade, i) => {
+      return cidade.estado.sigla == sigla ? true : false;
+    });
+
+    console.log(municipiosSelecionados);
+    setMunicipios([...municipiosSelecionados]);
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
-    console.log(name, value);
-
     setInstituicaoEnsino({ ...instituicaoEnsino, [name]: value });
-    console.log(instituicaoEnsino);
   };
 
   return (
@@ -87,7 +111,7 @@ const InstituicaoEnsino = () => {
         <Modal.Header closeButton>
           <Modal.Title>Instituição de Ensino</Modal.Title>
         </Modal.Header>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Modal.Body>
             <Row>
               <Col sm={3}>
@@ -119,30 +143,36 @@ const InstituicaoEnsino = () => {
             </Row>
             <Row>
               <Col>
-                <Form.Group className="mb-3" controlId="formGroupEmail">
-                  <Form.Label>UF</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="UF"
-                    name="uf"
-                    value={instituicaoEnsino.uf}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+                <label htmlFor="estado.sigla">Estado</label>
+                <select
+                  id="estado.sigla"
+                  name="estado.sigla"
+                  value={instituicaoEnsino.estado.sigla}
+                  onChange={handleChangeEstado}
+                >
+                  <option value="">-</option>
+                  {estados.map((estado, i) => (
+                    <option key={i} value={estado.sigla}>
+                      {estado.nome}
+                    </option>
+                  ))}
+                </select>
               </Col>
               <Col>
-                <Form.Group className="mb-3" controlId="formGroupEmail">
-                  <Form.Label>Município</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Município"
-                    name="municipio"
-                    value={instituicaoEnsino.municipio}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+                <label htmlFor="estado.sigla">Municípios</label>
+                <select
+                  id="municipio"
+                  name="municipio"
+                  value={instituicaoEnsino.municipio}
+                  onChange={handleChangeMunicipio}
+                >
+                  <option value="">-</option>
+                  {municipios.map((municipio, i) => (
+                    <option key={i} value={municipio.nome}>
+                      {municipio.nome}
+                    </option>
+                  ))}
+                </select>
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="formGroupEmail">
@@ -158,22 +188,13 @@ const InstituicaoEnsino = () => {
                 </Form.Group>
               </Col>
             </Row>
-
-            <Button
-              variant="warning"
-              onClick={(e) => {
-                console.log(instituicaoEnsino);
-              }}
-            >
-              Exibir
-            </Button>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleShow}>
               Fechar
             </Button>
             <Button variant="danger">Apagar</Button>
-            <Button type="submit" variant="primary" onClick={handleShow}>
+            <Button type="submit" variant="primary">
               Salvar
             </Button>
           </Modal.Footer>
