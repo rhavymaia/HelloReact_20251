@@ -5613,4 +5613,11 @@ const getMunicipiosByEstado = (coEstado) => {
   return cidadesEstado;
 };
 
-export default getMunicipiosByEstado;
+const getMunicipioByCodigo = (codigo) => {
+  const municipio = municipiosDataset.find(
+    (municipio) => municipio.codigo === parseInt(codigo),
+  );
+  return municipio ? municipio : null;
+};
+
+export { getMunicipiosByEstado, getMunicipioByCodigo };

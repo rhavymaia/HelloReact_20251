@@ -8,18 +8,26 @@ import {
   Row,
   Table,
 } from 'react-bootstrap';
-import instituicoesEnsino from '../datasets/censoescolar';
+import { ToastContainer, toast } from 'react-toastify';
+import instituicoesEnsinoDataset from '../datasets/censoescolar';
 import './InstituicaoEnsino.css';
-import estadosDataset from '../datasets/estados';
-import getMunicipiosByEstado from '../datasets/cidades';
+import { estadosDataset, getEstadoByCodigo } from '../datasets/estados';
+import {
+  getMunicipiosByEstado,
+  getMunicipioByCodigo,
+} from '../datasets/cidades';
 
 const InstituicaoEnsino = () => {
+  let [instituicoesEnsino, setInstituicoesEnsino] = useState([
+    ...instituicoesEnsinoDataset,
+  ]);
+
   const [instituicaoEnsino, setInstituicaoEnsino] = useState({
     codigo: '',
     nome: '',
     estado: { codigo: '', nome: '' },
     municipio: { codigo: '', nome: '' },
-    regiao: '',
+    regiao: { codigo: '', nome: '' },
   });
 
   let [estados, setEstados] = useState(estadosDataset);
@@ -31,25 +39,39 @@ const InstituicaoEnsino = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Submeteu os dados!');
+    // Adicionar os dados na tabela.
+    setInstituicoesEnsino([...instituicoesEnsino, instituicaoEnsino]);
+
+    // Adicionar os dados no LocalStorage.
+
+    // Fechar o modal.
+    handleShow();
+
+    // Exibir o Toast.
+    toast('Instituição inserida com sucesso!');
   };
+
   const handleChangeMunicipio = (event) => {
     const { value } = event.target;
-    let municipio = { codigo: value };
-    setInstituicaoEnsino({ ...instituicaoEnsino, municipio });
-    console.log(instituicaoEnsino);
+    const codigo = value;
+    let municipio = getMunicipioByCodigo(codigo);
+
+    setInstituicaoEnsino({ ...instituicaoEnsino, municipio: municipio });
   };
 
   const handleChangeEstado = (event) => {
-    let municipio = { codigo: '', nome: '' };
-    setInstituicaoEnsino({ ...instituicaoEnsino, municipio });
-    setMunicipios([]);
-
     const { value } = event.target;
-    // Atualizar a instituição de ensino com estado selecionado.
     const codigo = value;
-    let estado = { codigo: codigo };
-    setInstituicaoEnsino({ ...instituicaoEnsino, estado });
+    let estado = getEstadoByCodigo(codigo);
+
+    // Região.
+    // if (estado != null) {
+    //   let regiao = estado?.regiao;
+    // }
+    let regiao = estado?.regiao;
+
+    // Atualizar a instituição de ensino com estado e regiao selecionado.
+    setInstituicaoEnsino({ ...instituicaoEnsino, estado, regiao });
 
     // Filtrar as cidades.
     let municipiosSelecionados = getMunicipiosByEstado(codigo);
@@ -75,6 +97,7 @@ const InstituicaoEnsino = () => {
           </Button>
         </Col>
       </Row>
+      {/* Tabela */}
       <Row className="mt-2">
         <Col>
           <Table striped bordered hover size="sm">
@@ -97,9 +120,9 @@ const InstituicaoEnsino = () => {
                   <tr key={i}>
                     <td>{instituicaoEnsino.codigo}</td>
                     <td>{instituicaoEnsino.nome}</td>
-                    <td>{instituicaoEnsino.no_uf}</td>
-                    <td>{instituicaoEnsino.no_municipio}</td>
-                    <td>{instituicaoEnsino.no_regiao}</td>
+                    <td>{instituicaoEnsino.estado.nome}</td>
+                    <td>{instituicaoEnsino.municipio.nome}</td>
+                    <td>{instituicaoEnsino.regiao.nome}</td>
                     <td>{instituicaoEnsino.qt_mat_bas}</td>
                     <td>{instituicaoEnsino.qt_mat_prof}</td>
                     <td>{instituicaoEnsino.qt_mat_eja}</td>
@@ -111,7 +134,7 @@ const InstituicaoEnsino = () => {
           </Table>
         </Col>
       </Row>
-
+      {/* Modal */}
       <Modal show={show} onHide={handleShow} dialogClassName="modal-80w">
         <Modal.Header closeButton>
           <Modal.Title>Instituição de Ensino</Modal.Title>
@@ -148,10 +171,10 @@ const InstituicaoEnsino = () => {
             </Row>
             <Row>
               <Col>
-                <label htmlFor="estado.codigo">Estado</label>
+                <label htmlFor="estado">Estado</label>
                 <select
-                  id="estado.codigo"
-                  name="estado.codigo"
+                  id="estado"
+                  name="estado"
                   value={instituicaoEnsino.estado.codigo}
                   onChange={handleChangeEstado}
                 >
@@ -164,7 +187,7 @@ const InstituicaoEnsino = () => {
                 </select>
               </Col>
               <Col>
-                <label htmlFor="estado.sigla">Municípios</label>
+                <label htmlFor="municipio">Municípios</label>
                 <select
                   id="municipio"
                   name="municipio"
@@ -173,7 +196,7 @@ const InstituicaoEnsino = () => {
                 >
                   <option value="">-</option>
                   {municipios.map((municipio, i) => (
-                    <option key={i} value={municipio.codigo}>
+                    <option key={i} value={String(municipio.codigo)}>
                       {municipio.nome}
                     </option>
                   ))}
@@ -186,7 +209,7 @@ const InstituicaoEnsino = () => {
                     type="text"
                     placeholder="Região"
                     name="regiao"
-                    value={instituicaoEnsino.regiao}
+                    value={instituicaoEnsino.regiao.nome}
                     onChange={handleChange}
                     required
                   />
@@ -205,6 +228,8 @@ const InstituicaoEnsino = () => {
           </Modal.Footer>
         </Form>
       </Modal>
+      {/* Toast */}
+      <ToastContainer />
     </Container>
   );
 };

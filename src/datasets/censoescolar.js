@@ -1,13 +1,10 @@
-var instituicoesEnsino = [
+var instituicoesEnsinoDataset = [
   {
     codigo: '1030',
     nome: 'Instituto Federal da Paraíba - Campus Guarabira',
-    no_uf: 'Paraíba',
-    co_uf: '25',
-    no_municipio: 'Guarabira',
-    co_municipio: '2506301',
-    no_regiao: 'Nordeste',
-    co_regiao: '2',
+    estado: { codigo: '25', nome: 'Paraíba' },
+    municipio: { codigo: '2506301', nome: 'Guarabira' },
+    regiao: { codigo: '2', nome: 'Nordeste' },
     qt_mat_bas: '100',
     qt_mat_prof: '500',
     qt_mat_eja: '400',
@@ -15,4 +12,4 @@ var instituicoesEnsino = [
   },
 ];
 
-export default instituicoesEnsino;
+export default instituicoesEnsinoDataset;
