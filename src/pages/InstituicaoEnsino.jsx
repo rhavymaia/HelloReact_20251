@@ -11,14 +11,14 @@ import {
 import instituicoesEnsino from '../datasets/censoescolar';
 import './InstituicaoEnsino.css';
 import estadosDataset from '../datasets/estados';
-import cidadesDataset from '../datasets/cidades';
+import getMunicipiosByEstado from '../datasets/cidades';
 
 const InstituicaoEnsino = () => {
   const [instituicaoEnsino, setInstituicaoEnsino] = useState({
     codigo: '',
     nome: '',
-    estado: { sigla: '', nome: '' },
-    municipio: '',
+    estado: { codigo: '', nome: '' },
+    municipio: { codigo: '', nome: '' },
     regiao: '',
   });
 
@@ -33,21 +33,26 @@ const InstituicaoEnsino = () => {
     event.preventDefault();
     console.log('Submeteu os dados!');
   };
-  const handleChangeMunicipio = (event) => {};
+  const handleChangeMunicipio = (event) => {
+    const { value } = event.target;
+    let municipio = { codigo: value };
+    setInstituicaoEnsino({ ...instituicaoEnsino, municipio });
+    console.log(instituicaoEnsino);
+  };
 
   const handleChangeEstado = (event) => {
-    const { name, value } = event.target;
+    let municipio = { codigo: '', nome: '' };
+    setInstituicaoEnsino({ ...instituicaoEnsino, municipio });
+    setMunicipios([]);
+
+    const { value } = event.target;
     // Atualizar a instituição de ensino com estado selecionado.
-    const sigla = value;
-    let estado = { sigla };
+    const codigo = value;
+    let estado = { codigo: codigo };
     setInstituicaoEnsino({ ...instituicaoEnsino, estado });
 
     // Filtrar as cidades.
-    let municipiosSelecionados = cidadesDataset.filter((cidade, i) => {
-      return cidade.estado.sigla == sigla ? true : false;
-    });
-
-    console.log(municipiosSelecionados);
+    let municipiosSelecionados = getMunicipiosByEstado(codigo);
     setMunicipios([...municipiosSelecionados]);
   };
 
@@ -143,16 +148,16 @@ const InstituicaoEnsino = () => {
             </Row>
             <Row>
               <Col>
-                <label htmlFor="estado.sigla">Estado</label>
+                <label htmlFor="estado.codigo">Estado</label>
                 <select
-                  id="estado.sigla"
-                  name="estado.sigla"
-                  value={instituicaoEnsino.estado.sigla}
+                  id="estado.codigo"
+                  name="estado.codigo"
+                  value={instituicaoEnsino.estado.codigo}
                   onChange={handleChangeEstado}
                 >
                   <option value="">-</option>
                   {estados.map((estado, i) => (
-                    <option key={i} value={estado.sigla}>
+                    <option key={i} value={estado.codigo}>
                       {estado.nome}
                     </option>
                   ))}
@@ -163,12 +168,12 @@ const InstituicaoEnsino = () => {
                 <select
                   id="municipio"
                   name="municipio"
-                  value={instituicaoEnsino.municipio}
+                  value={instituicaoEnsino.municipio.codigo}
                   onChange={handleChangeMunicipio}
                 >
                   <option value="">-</option>
                   {municipios.map((municipio, i) => (
-                    <option key={i} value={municipio.nome}>
+                    <option key={i} value={municipio.codigo}>
                       {municipio.nome}
                     </option>
                   ))}
